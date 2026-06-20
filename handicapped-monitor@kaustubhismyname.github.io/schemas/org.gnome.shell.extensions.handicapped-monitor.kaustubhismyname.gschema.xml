@@ -31,6 +31,12 @@
       <summary>Extra top panel margin percentage</summary>
       <description>Additional percentage of display width to remove from the right side of the top panel.</description>
     </key>
+    <key name="selected-monitor" type="i">
+      <default>-1</default>
+      <range min="-1" max="15"/>
+      <summary>Selected monitor</summary>
+      <description>Monitor index to mask. Use -1 for the primary monitor.</description>
+    </key>
     <key name="reset-shortcut" type="as">
       <default><![CDATA[['<Super><Shift>BackSpace']]]></default>
       <summary>Reset shortcut</summary>
