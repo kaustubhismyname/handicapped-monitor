@@ -11,6 +11,8 @@ This is useful when part of a laptop panel or monitor is cracked, discolored, fl
 - Configurable blackout percentages for all four screen edges.
 - Top panel resizing so status icons can stay inside the usable area.
 - Preferences UI in GNOME Extensions.
+- Safety clamp that keeps at least 10% of the display visible.
+- Emergency reset shortcut: `Super` + `Shift` + `Backspace`.
 - Defaults to a right-side 35% mask and 6% extra panel margin.
 
 ## Compatibility
@@ -116,6 +118,27 @@ The default settings are:
 - Top panel extra margin: 6%
 
 Changes should apply live while the extension is enabled.
+
+## Emergency Reset
+
+If you accidentally make the visible area too small, press:
+
+```text
+Super + Shift + Backspace
+```
+
+That resets all mask percentages to their defaults.
+
+There is also a hard safety clamp: the extension will always leave at least 10% of the primary display visible horizontally and vertically, even if the configured percentages would cover more.
+
+You can also reset from a terminal:
+
+```sh
+SCHEMA=org.gnome.shell.extensions.handicapped-monitor.kaustubhismyname
+SCHEMA_DIR="$HOME/.local/share/gnome-shell/extensions/handicapped-monitor@kaustubhismyname.github.io/schemas"
+GSETTINGS_SCHEMA_DIR="$SCHEMA_DIR" \
+gsettings reset-recursively "$SCHEMA"
+```
 
 ## Update
 

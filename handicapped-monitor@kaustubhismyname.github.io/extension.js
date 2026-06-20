@@ -1,3 +1,5 @@
+import Meta from 'gi://Meta';
+import Shell from 'gi://Shell';
 import St from 'gi://St';
 
 import {Extension} from 'resource:///org/gnome/shell/extensions/extension.js';
@@ -10,12 +12,21 @@ const EDGE_KEYS = [
     'bottom-mask-percent',
     'panel-extra-margin-percent',
 ];
+const RESET_KEYBINDING = 'reset-shortcut';
+const MIN_VISIBLE_FRACTION = 0.10;
 
 export default class HandicappedMonitor extends Extension {
     enable() {
         this._settings = this.getSettings();
         this._settingsChangedIds = EDGE_KEYS.map(key =>
             this._settings.connect(`changed::${key}`, () => this._syncMask()));
+        Main.wm.addKeybinding(
+            RESET_KEYBINDING,
+            this._settings,
+            Meta.KeyBindingFlags.IGNORE_AUTOREPEAT,
+            Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
+            () => this._resetSettings()
+        );
 
         this._masks = new Map();
         for (const edge of ['right', 'left', 'top', 'bottom']) {
@@ -48,6 +59,7 @@ export default class HandicappedMonitor extends Extension {
         }
 
         if (this._settings && this._settingsChangedIds) {
+            Main.wm.removeKeybinding(RESET_KEYBINDING);
             for (const id of this._settingsChangedIds)
                 this._settings.disconnect(id);
             this._settingsChangedIds = null;
@@ -70,10 +82,18 @@ export default class HandicappedMonitor extends Extension {
         if (!monitor || !this._masks || !this._settings)
             return;
 
-        const rightWidth = this._widthFromPercent('right-mask-percent', monitor);
-        const leftWidth = this._widthFromPercent('left-mask-percent', monitor);
-        const topHeight = this._heightFromPercent('top-mask-percent', monitor);
-        const bottomHeight = this._heightFromPercent('bottom-mask-percent', monitor);
+        const maxHorizontalMaskWidth = Math.round(monitor.width * (1 - MIN_VISIBLE_FRACTION));
+        const maxVerticalMaskHeight = Math.round(monitor.height * (1 - MIN_VISIBLE_FRACTION));
+        const [leftWidth, rightWidth] = this._clampPair(
+            this._widthFromPercent('left-mask-percent', monitor),
+            this._widthFromPercent('right-mask-percent', monitor),
+            maxHorizontalMaskWidth
+        );
+        const [topHeight, bottomHeight] = this._clampPair(
+            this._heightFromPercent('top-mask-percent', monitor),
+            this._heightFromPercent('bottom-mask-percent', monitor),
+            maxVerticalMaskHeight
+        );
         const visibleWidth = Math.max(1, monitor.width - leftWidth - rightWidth);
         const panelExtraMargin = this._widthFromPercent('panel-extra-margin-percent', monitor);
         const panelWidth = Math.max(1, visibleWidth - panelExtraMargin);
@@ -101,6 +121,25 @@ export default class HandicappedMonitor extends Extension {
 
     _heightFromPercent(key, monitor) {
         return Math.round(monitor.height * this._settings.get_double(key) / 100);
+    }
+
+    _resetSettings() {
+        for (const key of EDGE_KEYS)
+            this._settings.reset(key);
+
+        this._syncMask();
+    }
+
+    _clampPair(first, second, maxTotal) {
+        const total = first + second;
+        if (total <= maxTotal)
+            return [first, second];
+
+        const scale = maxTotal / total;
+        return [
+            Math.floor(first * scale),
+            Math.floor(second * scale),
+        ];
     }
 
     _resizePanel(monitor, leftWidth, topHeight, usableWidth) {
