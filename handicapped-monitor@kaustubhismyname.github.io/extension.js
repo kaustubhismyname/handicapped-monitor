@@ -183,24 +183,26 @@ export default class HandicappedMonitor extends Extension {
     }
 
     _getPrimaryMonitor() {
+        const primaryIndex = global.display?.get_primary_monitor?.();
+        if (primaryIndex !== undefined && primaryIndex >= 0)
+            return this._getMonitorGeometry(primaryIndex);
+
         return Main.layoutManager.primaryMonitor || Main.layoutManager.monitors?.[0] || null;
     }
 
     _getSelectedMonitor() {
-        const monitors = this._getSortedMonitors();
         const index = this._settings.get_int('selected-monitor');
-        if (index >= 0 && index < monitors.length)
-            return monitors[index];
+        if (index >= 0)
+            return this._getMonitorGeometry(index) || this._getPrimaryMonitor();
 
         return this._getPrimaryMonitor();
     }
 
-    _getSortedMonitors() {
-        return [...(Main.layoutManager.monitors || [])].sort((first, second) => {
-            if (first.x !== second.x)
-                return first.x - second.x;
+    _getMonitorGeometry(index) {
+        const count = global.display?.get_n_monitors?.() || 0;
+        if (index < 0 || index >= count)
+            return null;
 
-            return first.y - second.y;
-        });
+        return global.display.get_monitor_geometry(index);
     }
 }
