@@ -12,17 +12,13 @@ const EDGE_KEYS = [
     'bottom-mask-percent',
     'panel-extra-margin-percent',
 ];
-const REDRAW_KEYS = [
-    ...EDGE_KEYS,
-    'selected-monitor',
-];
 const RESET_KEYBINDING = 'reset-shortcut';
 const MIN_VISIBLE_FRACTION = 0.10;
 
 export default class HandicappedMonitor extends Extension {
     enable() {
         this._settings = this.getSettings();
-        this._settingsChangedIds = REDRAW_KEYS.map(key =>
+        this._settingsChangedIds = EDGE_KEYS.map(key =>
             this._settings.connect(`changed::${key}`, () => this._syncMask()));
         Main.wm.addKeybinding(
             RESET_KEYBINDING,
@@ -82,7 +78,7 @@ export default class HandicappedMonitor extends Extension {
     }
 
     _syncMask() {
-        const monitor = this._getSelectedMonitor();
+        const monitor = this._getPrimaryMonitor();
         if (!monitor || !this._masks || !this._settings)
             return;
 
@@ -107,10 +103,7 @@ export default class HandicappedMonitor extends Extension {
         this._setMask('top', monitor.x + leftWidth, monitor.y, visibleWidth, topHeight);
         this._setMask('bottom', monitor.x + leftWidth, monitor.y + monitor.height - bottomHeight, visibleWidth, bottomHeight);
 
-        if (monitor === this._getPrimaryMonitor())
-            this._resizePanel(monitor, leftWidth, topHeight, panelWidth);
-        else
-            this._restorePanel();
+        this._resizePanel(monitor, leftWidth, topHeight, panelWidth);
     }
 
     _setMask(edge, x, y, width, height) {
@@ -183,26 +176,6 @@ export default class HandicappedMonitor extends Extension {
     }
 
     _getPrimaryMonitor() {
-        const primaryIndex = global.display?.get_primary_monitor?.();
-        if (primaryIndex !== undefined && primaryIndex >= 0)
-            return this._getMonitorGeometry(primaryIndex);
-
         return Main.layoutManager.primaryMonitor || Main.layoutManager.monitors?.[0] || null;
-    }
-
-    _getSelectedMonitor() {
-        const index = this._settings.get_int('selected-monitor');
-        if (index >= 0)
-            return this._getMonitorGeometry(index) || this._getPrimaryMonitor();
-
-        return this._getPrimaryMonitor();
-    }
-
-    _getMonitorGeometry(index) {
-        const count = global.display?.get_n_monitors?.() || 0;
-        if (index < 0 || index >= count)
-            return null;
-
-        return global.display.get_monitor_geometry(index);
     }
 }

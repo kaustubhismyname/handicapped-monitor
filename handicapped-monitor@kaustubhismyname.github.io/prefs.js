@@ -1,5 +1,4 @@
 import Adw from 'gi://Adw';
-import Gdk from 'gi://Gdk';
 import Gio from 'gi://Gio';
 import GObject from 'gi://GObject';
 import Gtk from 'gi://Gtk';
@@ -31,48 +30,14 @@ class HandicappedMonitorPrefsPage extends Adw.PreferencesPage {
             schema_id: NIGHT_LIGHT_SCHEMA,
         });
 
-        this._addMonitorGroup();
         this._addBlackoutGroup();
         this._addNightLightGroup();
-    }
-
-    _addMonitorGroup() {
-        const group = new Adw.PreferencesGroup({
-            title: 'Monitor',
-            description: 'Select which display receives the black masks.',
-        });
-        this.add(group);
-
-        const labels = this._getMonitorLabels();
-        const row = new Adw.ComboRow({
-            title: 'Affected monitor',
-            subtitle: 'Top panel resizing only applies when the selected monitor is primary',
-            model: Gtk.StringList.new(labels),
-            selected: this._monitorIndexToSelection(this._settings.get_int('selected-monitor')),
-        });
-
-        row.connect('notify::selected', () => {
-            this._settings.set_int(
-                'selected-monitor',
-                this._selectionToMonitorIndex(row.selected)
-            );
-        });
-
-        this._settings.connect('changed::selected-monitor', () => {
-            const selected = this._monitorIndexToSelection(
-                this._settings.get_int('selected-monitor')
-            );
-            if (row.selected !== selected)
-                row.selected = selected;
-        });
-
-        group.add(row);
     }
 
     _addBlackoutGroup() {
         const group = new Adw.PreferencesGroup({
             title: 'Blackout Areas',
-            description: 'Percentages apply to the selected monitor.',
+            description: 'Percentages apply to the primary monitor.',
         });
         this.add(group);
 
@@ -112,7 +77,7 @@ class HandicappedMonitorPrefsPage extends Adw.PreferencesPage {
     _addNightLightGroup() {
         const group = new Adw.PreferencesGroup({
             title: 'Night Light',
-            description: 'GNOME Night Light is global and affects all monitors, not only the selected monitor.',
+            description: 'GNOME Night Light is global and affects all monitors.',
         });
         this.add(group);
 
@@ -161,57 +126,6 @@ class HandicappedMonitorPrefsPage extends Adw.PreferencesPage {
         });
         temperature.add_suffix(spin);
         group.add(temperature);
-    }
-
-    _getMonitorLabels() {
-        const labels = ['Primary monitor'];
-        const monitors = this._getSortedMonitors();
-
-        for (let i = 0; i < monitors.length; i++) {
-            const monitor = monitors[i];
-            const connector = monitor?.get_connector?.();
-            const model = monitor?.get_model?.();
-            const geometry = monitor?.get_geometry?.();
-            const position = geometry ? `${geometry.x},${geometry.y}` : '';
-            const details = [connector, model, position].filter(Boolean).join(' ');
-            labels.push(details ? `Monitor ${i + 1}: ${details}` : `Monitor ${i + 1}`);
-        }
-
-        if (labels.length === 1) {
-            for (let i = 0; i < 4; i++)
-                labels.push(`Monitor ${i + 1}`);
-        }
-
-        return labels;
-    }
-
-    _getSortedMonitors() {
-        const display = Gdk.Display.get_default();
-        const monitors = display?.get_monitors?.();
-        const count = monitors?.get_n_items?.() || 0;
-        const result = [];
-
-        for (let i = 0; i < count; i++)
-            result.push(monitors.get_item(i));
-
-        return result.sort((first, second) => {
-            const firstGeometry = first?.get_geometry?.();
-            const secondGeometry = second?.get_geometry?.();
-            if (!firstGeometry || !secondGeometry)
-                return 0;
-            if (firstGeometry.x !== secondGeometry.x)
-                return firstGeometry.x - secondGeometry.x;
-
-            return firstGeometry.y - secondGeometry.y;
-        });
-    }
-
-    _monitorIndexToSelection(index) {
-        return index < 0 ? 0 : index + 1;
-    }
-
-    _selectionToMonitorIndex(selection) {
-        return selection === 0 ? -1 : selection - 1;
     }
 }
 

@@ -9,7 +9,6 @@ This is useful when part of a laptop panel or monitor is cracked, discolored, fl
 ## Features
 
 - Configurable blackout percentages for all four screen edges.
-- Monitor selector for choosing which display receives the masks.
 - Top panel resizing so status icons can stay inside the usable area.
 - Global GNOME Night Light controls in the preferences window.
 - Preferences UI in GNOME Extensions.
@@ -105,7 +104,6 @@ Open GNOME Extensions, find **Handicapped Monitor**, and open its preferences.
 
 Available settings:
 
-- Affected monitor
 - Right blackout
 - Left blackout
 - Top blackout
@@ -124,7 +122,7 @@ The default settings are:
 
 Changes should apply live while the extension is enabled.
 
-Night Light note: GNOME Night Light is a global display setting. The controls in this extension affect GNOME Night Light for the session; they are not limited to only the selected monitor.
+Night Light note: GNOME Night Light is a global display setting. The controls in this extension affect GNOME Night Light for the session.
 
 ## Emergency Reset
 
@@ -166,7 +164,7 @@ rm -rf ~/.local/share/gnome-shell/extensions/handicapped-monitor@kaustubhismynam
 
 ## Limitations
 
-- Black masks can target one selected monitor at a time.
+- Black masks apply to the primary monitor only.
 - GNOME Night Light is controlled globally, not per monitor.
 - The extension masks and reserves screen regions; it does not repair panel color damage.
 - Fullscreen apps may still behave differently depending on how they interact with GNOME Shell.
