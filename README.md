@@ -78,7 +78,7 @@ If GNOME does not load the extension immediately, log out and log back in.
 Then enable it if needed:
 
 ```sh
-gnome-extensions enable handicapped-monitor@local
+gnome-extensions enable handicapped-monitor@kaustubhismyname.github.io
 ```
 
 ## Manual Install
@@ -86,7 +86,7 @@ gnome-extensions enable handicapped-monitor@local
 If you do not want to use `install.sh`:
 
 ```sh
-UUID=handicapped-monitor@local
+UUID=handicapped-monitor@kaustubhismyname.github.io
 mkdir -p ~/.local/share/gnome-shell/extensions
 cp -R "$UUID" ~/.local/share/gnome-shell/extensions/
 glib-compile-schemas ~/.local/share/gnome-shell/extensions/"$UUID"/schemas
@@ -130,8 +130,8 @@ Log out and back in if GNOME keeps using the old extension code.
 ## Uninstall
 
 ```sh
-gnome-extensions disable handicapped-monitor@local
-rm -rf ~/.local/share/gnome-shell/extensions/handicapped-monitor@local
+gnome-extensions disable handicapped-monitor@kaustubhismyname.github.io
+rm -rf ~/.local/share/gnome-shell/extensions/handicapped-monitor@kaustubhismyname.github.io
 ```
 
 ## Limitations

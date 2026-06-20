@@ -1,8 +1,0 @@
-{
-  "uuid": "handicapped-monitor@local",
-  "name": "Handicapped Monitor",
-  "description": "Configurable black masks for broken screen edges.",
-  "shell-version": ["50"],
-  "settings-schema": "org.gnome.shell.extensions.handicapped-monitor",
-  "version": 1
-}

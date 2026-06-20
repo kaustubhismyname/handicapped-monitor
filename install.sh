@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 set -eu
 
-UUID="handicapped-monitor@local"
+UUID="handicapped-monitor@kaustubhismyname.github.io"
 SRC_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)/$UUID"
 DEST_DIR="$HOME/.local/share/gnome-shell/extensions/$UUID"
 

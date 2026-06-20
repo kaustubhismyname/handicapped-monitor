@@ -1,0 +1,8 @@
+{
+  "uuid": "handicapped-monitor@kaustubhismyname.github.io",
+  "name": "Handicapped Monitor",
+  "description": "Configurable black masks for broken screen edges.",
+  "shell-version": ["50"],
+  "settings-schema": "org.gnome.shell.extensions.handicapped-monitor.kaustubhismyname",
+  "url": "https://github.com/kaustubhismyname/handicapped-monitor"
+}

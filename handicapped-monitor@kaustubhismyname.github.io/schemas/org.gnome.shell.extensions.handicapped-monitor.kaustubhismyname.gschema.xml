@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
-  <schema id="org.gnome.shell.extensions.handicapped-monitor" path="/org/gnome/shell/extensions/handicapped-monitor/">
+  <schema id="org.gnome.shell.extensions.handicapped-monitor.kaustubhismyname" path="/org/gnome/shell/extensions/handicapped-monitor/kaustubhismyname/">
     <key name="right-mask-percent" type="d">
       <default>35.0</default>
       <range min="0.0" max="90.0"/>
