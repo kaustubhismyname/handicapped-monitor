@@ -165,15 +165,15 @@ class HandicappedMonitorPrefsPage extends Adw.PreferencesPage {
 
     _getMonitorLabels() {
         const labels = ['Primary monitor'];
-        const display = Gdk.Display.get_default();
-        const monitors = display?.get_monitors?.();
-        const count = monitors?.get_n_items?.() || 0;
+        const monitors = this._getSortedMonitors();
 
-        for (let i = 0; i < count; i++) {
-            const monitor = monitors.get_item(i);
+        for (let i = 0; i < monitors.length; i++) {
+            const monitor = monitors[i];
             const connector = monitor?.get_connector?.();
             const model = monitor?.get_model?.();
-            const details = [connector, model].filter(Boolean).join(' ');
+            const geometry = monitor?.get_geometry?.();
+            const position = geometry ? `${geometry.x},${geometry.y}` : '';
+            const details = [connector, model, position].filter(Boolean).join(' ');
             labels.push(details ? `Monitor ${i + 1}: ${details}` : `Monitor ${i + 1}`);
         }
 
@@ -183,6 +183,27 @@ class HandicappedMonitorPrefsPage extends Adw.PreferencesPage {
         }
 
         return labels;
+    }
+
+    _getSortedMonitors() {
+        const display = Gdk.Display.get_default();
+        const monitors = display?.get_monitors?.();
+        const count = monitors?.get_n_items?.() || 0;
+        const result = [];
+
+        for (let i = 0; i < count; i++)
+            result.push(monitors.get_item(i));
+
+        return result.sort((first, second) => {
+            const firstGeometry = first?.get_geometry?.();
+            const secondGeometry = second?.get_geometry?.();
+            if (!firstGeometry || !secondGeometry)
+                return 0;
+            if (firstGeometry.x !== secondGeometry.x)
+                return firstGeometry.x - secondGeometry.x;
+
+            return firstGeometry.y - secondGeometry.y;
+        });
     }
 
     _monitorIndexToSelection(index) {

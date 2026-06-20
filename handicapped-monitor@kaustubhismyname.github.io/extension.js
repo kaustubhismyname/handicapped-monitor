@@ -187,11 +187,20 @@ export default class HandicappedMonitor extends Extension {
     }
 
     _getSelectedMonitor() {
-        const monitors = Main.layoutManager.monitors || [];
+        const monitors = this._getSortedMonitors();
         const index = this._settings.get_int('selected-monitor');
         if (index >= 0 && index < monitors.length)
             return monitors[index];
 
         return this._getPrimaryMonitor();
+    }
+
+    _getSortedMonitors() {
+        return [...(Main.layoutManager.monitors || [])].sort((first, second) => {
+            if (first.x !== second.x)
+                return first.x - second.x;
+
+            return first.y - second.y;
+        });
     }
 }
