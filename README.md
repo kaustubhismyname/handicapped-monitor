@@ -13,7 +13,7 @@ This is useful when part of a laptop panel or monitor is cracked, discolored, fl
 - Preferences UI in GNOME Extensions.
 - Safety clamp that keeps at least 10% of the display visible.
 - Emergency reset shortcut: `Super` + `Shift` + `Backspace`.
-- Defaults to a right-side 35% mask and 6% extra panel margin.
+- Defaults to no blackout, so emergency reset always restores a fully visible display.
 
 ## Compatibility
 
@@ -111,11 +111,11 @@ Available settings:
 
 The default settings are:
 
-- Right blackout: 35%
+- Right blackout: 0%
 - Left blackout: 0%
 - Top blackout: 0%
 - Bottom blackout: 0%
-- Top panel extra margin: 6%
+- Top panel extra margin: 0%
 
 Changes should apply live while the extension is enabled.
 

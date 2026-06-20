@@ -2,7 +2,7 @@
 <schemalist>
   <schema id="org.gnome.shell.extensions.handicapped-monitor.kaustubhismyname" path="/org/gnome/shell/extensions/handicapped-monitor/kaustubhismyname/">
     <key name="right-mask-percent" type="d">
-      <default>35.0</default>
+      <default>0.0</default>
       <range min="0.0" max="90.0"/>
       <summary>Right blackout percentage</summary>
       <description>Percentage of the primary display width to black out from the right edge.</description>
@@ -26,7 +26,7 @@
       <description>Percentage of the primary display height to black out from the bottom edge.</description>
     </key>
     <key name="panel-extra-margin-percent" type="d">
-      <default>6.0</default>
+      <default>0.0</default>
       <range min="0.0" max="50.0"/>
       <summary>Extra top panel margin percentage</summary>
       <description>Additional percentage of display width to remove from the right side of the top panel.</description>
