@@ -29,6 +29,7 @@ class HandicappedMonitorPrefsPage extends Adw.PreferencesPage {
         this._nightLightSettings = new Gio.Settings({
             schema_id: NIGHT_LIGHT_SCHEMA,
         });
+        this._signalIds = [];
 
         this._addBlackoutGroup();
         this._addNightLightGroup();
@@ -107,25 +108,23 @@ class HandicappedMonitorPrefsPage extends Adw.PreferencesPage {
         });
         spin.set_size_request(120, -1);
         spin.set_value(this._nightLightSettings.get_uint('night-light-temperature'));
-        spin.connectObject(
-            'value-changed',
-            () => {
+        this._signalIds.push([
+            spin,
+            spin.connect('value-changed', () => {
                 this._nightLightSettings.set_uint(
                     'night-light-temperature',
                     Math.round(spin.get_value())
                 );
-            },
-            this
-        );
-        this._nightLightSettings.connectObject(
-            'changed::night-light-temperature',
-            () => {
+            }),
+        ]);
+        this._signalIds.push([
+            this._nightLightSettings,
+            this._nightLightSettings.connect('changed::night-light-temperature', () => {
                 const value = this._nightLightSettings.get_uint('night-light-temperature');
                 if (spin.get_value() !== value)
                     spin.set_value(value);
-            },
-            this
-        );
+            }),
+        ]);
 
         const temperature = new Adw.ActionRow({
             title: 'Temperature',
@@ -135,10 +134,21 @@ class HandicappedMonitorPrefsPage extends Adw.PreferencesPage {
         temperature.add_suffix(spin);
         group.add(temperature);
     }
+
+    cleanup() {
+        for (const [object, id] of this._signalIds)
+            object.disconnect(id);
+
+        this._signalIds = [];
+    }
 }
 
 export default class HandicappedMonitorPreferences extends ExtensionPreferences {
     fillPreferencesWindow(window) {
-        window.add(new HandicappedMonitorPrefsPage(this.getSettings()));
+        const page = new HandicappedMonitorPrefsPage(this.getSettings());
+        window.add(page);
+        window.connect('close-request', () => {
+            page.cleanup();
+        });
     }
 }
