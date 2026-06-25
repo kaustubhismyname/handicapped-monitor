@@ -107,17 +107,25 @@ class HandicappedMonitorPrefsPage extends Adw.PreferencesPage {
         });
         spin.set_size_request(120, -1);
         spin.set_value(this._nightLightSettings.get_uint('night-light-temperature'));
-        spin.connect('value-changed', () => {
-            this._nightLightSettings.set_uint(
-                'night-light-temperature',
-                Math.round(spin.get_value())
-            );
-        });
-        this._nightLightSettings.connect('changed::night-light-temperature', () => {
-            const value = this._nightLightSettings.get_uint('night-light-temperature');
-            if (spin.get_value() !== value)
-                spin.set_value(value);
-        });
+        spin.connectObject(
+            'value-changed',
+            () => {
+                this._nightLightSettings.set_uint(
+                    'night-light-temperature',
+                    Math.round(spin.get_value())
+                );
+            },
+            this
+        );
+        this._nightLightSettings.connectObject(
+            'changed::night-light-temperature',
+            () => {
+                const value = this._nightLightSettings.get_uint('night-light-temperature');
+                if (spin.get_value() !== value)
+                    spin.set_value(value);
+            },
+            this
+        );
 
         const temperature = new Adw.ActionRow({
             title: 'Temperature',

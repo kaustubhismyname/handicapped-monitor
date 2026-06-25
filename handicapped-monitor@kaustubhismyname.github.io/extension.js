@@ -18,8 +18,13 @@ const MIN_VISIBLE_FRACTION = 0.10;
 export default class HandicappedMonitor extends Extension {
     enable() {
         this._settings = this.getSettings();
-        this._settingsChangedIds = EDGE_KEYS.map(key =>
-            this._settings.connect(`changed::${key}`, () => this._syncMask()));
+        for (const key of EDGE_KEYS)
+            this._settings.connectObject(
+                `changed::${key}`,
+                () => this._syncMask(),
+                this
+            );
+
         Main.wm.addKeybinding(
             RESET_KEYBINDING,
             this._settings,
@@ -44,25 +49,21 @@ export default class HandicappedMonitor extends Extension {
             this._masks.set(edge, mask);
         }
 
-        this._monitorsChangedId = Main.layoutManager.connect(
+        Main.layoutManager.connectObject(
             'monitors-changed',
-            () => this._syncMask()
+            () => this._syncMask(),
+            this
         );
 
         this._syncMask();
     }
 
     disable() {
-        if (this._monitorsChangedId) {
-            Main.layoutManager.disconnect(this._monitorsChangedId);
-            this._monitorsChangedId = null;
-        }
+        Main.wm.removeKeybinding(RESET_KEYBINDING);
+        Main.layoutManager.disconnectObject(this);
 
-        if (this._settings && this._settingsChangedIds) {
-            Main.wm.removeKeybinding(RESET_KEYBINDING);
-            for (const id of this._settingsChangedIds)
-                this._settings.disconnect(id);
-            this._settingsChangedIds = null;
+        if (this._settings) {
+            this._settings.disconnectObject(this);
             this._settings = null;
         }
 

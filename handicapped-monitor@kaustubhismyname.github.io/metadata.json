@@ -3,6 +3,9 @@
   "name": "Handicapped Monitor",
   "description": "Configurable black masks for broken screen edges.",
   "shell-version": ["50"],
-  "settings-schema": "org.gnome.shell.extensions.handicapped-monitor.kaustubhismyname",
-  "url": "https://github.com/kaustubhismyname/handicapped-monitor"
+  "settings-schema": "org.gnome.shell.extensions.handicapped-monitor",
+  "url": "https://github.com/kaustubhismyname/handicapped-monitor",
+  "donations": {
+    "github": "kaustubhismyname"
+  }
 }

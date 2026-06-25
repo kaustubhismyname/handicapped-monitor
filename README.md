@@ -139,7 +139,7 @@ There is also a hard safety clamp: the extension will always leave at least 10% 
 You can also reset from a terminal:
 
 ```sh
-SCHEMA=org.gnome.shell.extensions.handicapped-monitor.kaustubhismyname
+SCHEMA=org.gnome.shell.extensions.handicapped-monitor
 SCHEMA_DIR="$HOME/.local/share/gnome-shell/extensions/handicapped-monitor@kaustubhismyname.github.io/schemas"
 GSETTINGS_SCHEMA_DIR="$SCHEMA_DIR" \
 gsettings reset-recursively "$SCHEMA"
